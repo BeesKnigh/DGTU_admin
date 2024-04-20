@@ -269,6 +269,21 @@ def user_info_page():
     else:
         st.error("Ошибка: токен аутентификации не найден.")
 
+
+def delete_cards():
+    st.subheader("Удаление карт")
+    secret_key = st.text_input("Секретный ключ карты")
+
+    if st.button("Удалить карту"):
+        response = requests.delete(
+            f"{api_url}/card/delete",
+            params={"secret_key": secret_key}
+        )
+        if response.status_code == 200:
+            st.success("Карта успешно удалена!")
+        else:
+            st.error("Ошибка при удалении карты.")
+
 def view_all_locations():
     st.subheader("Список всех локаций")
     response = requests.get(f"{api_url}/category/all")
@@ -365,7 +380,7 @@ def main():
                         else:
                             st.error("Ошибка при создании карты.")
             elif admin_option == "Удаление карт":
-                st.warning("Функциональность 'Удаление карт' пока не реализована.")
+                delete_cards()
             elif admin_option == "Управление ролями":
                 manage_roles()
             elif admin_option == "Регистрация нового админа":
@@ -398,6 +413,7 @@ def main():
         if st.session_state['logged_in']:
             if st.button("Личный кабинет"):
                 user_info_page()
+
 
 if __name__ == "__main__":
     main()
