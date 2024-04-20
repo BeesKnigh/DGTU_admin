@@ -153,7 +153,21 @@ def main():
             ["Посмотреть все карты", "Создать карту", "Удаление карт", "Посмотреть всех пользователей", "Управление ролями"]
         )
         if dashboard_option == "Посмотреть все карты":
-            pass
+            user_token = st.text_input("Токен пользователя")  # Поле для ввода токена
+            if st.button("Показать карты"):
+                response = requests.get(
+                    f"{api_url}/card",
+                    params={"user_token": user_token},
+                )
+                if response.status_code == 200:
+                    cards_data = response.json()
+                    with st.expander("Список карт"):
+                        for card in cards_data:
+                            st.write(f"ID карты: {card['card_id']}")
+                            st.write(f"Секретный ключ: {card['secret_key']}")
+                            st.write("---")
+                else:
+                    st.error("Ошибка при получении списка карт.")
         elif dashboard_option == "Посмотреть всех пользователей":
             response = requests.get(f"{api_url}")
             if response.status_code == 200:
@@ -163,12 +177,22 @@ def main():
             else:
                 st.error("Ошибка при получении списка пользователей.")
         elif dashboard_option == "Создать карту":
-            pass
+            user_id = st.number_input("ID пользователя", min_value=1)
+            if st.button("Создать карту"):
+                response = requests.post(
+                    f"{api_url}/card",
+                    params={"user_id": user_id},
+                )
+                if response.status_code == 200:
+                    st.success("Карта успешно создана!")
+                    card_data = response.json()
+                    st.write(f"Секретный ключ карты: {card_data.get('secret_key')}")  # Выводим секретный ключ (опционально)
+                else:
+                    st.error("Ошибка при создании карты.")
         elif dashboard_option == "Удаление карт":
-            pass
+            pass  # Здесь нужно реализовать удаление карт
         elif dashboard_option == "Управление ролями":
             manage_roles()
-
 
 if __name__ == "__main__":
     main()
