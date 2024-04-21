@@ -93,8 +93,10 @@ def manage_roles():
                     st.error("Ошибка при добавлении роли.")
             else:
                 st.error("Ошибка: токен аутентификации не найден.")
+
     if st.button("Узнать роль"):
         st.warning("Функциональность 'Узнать роль' пока не реализована.")
+
     if st.button("Узнать все роли"):
         response = requests.get(f"{api_url}/privileges/all")
         if response.status_code == 200:
@@ -152,8 +154,7 @@ def view_all_cards():
         auth_token = st.session_state.get('auth_hash')
         if auth_token:
             response = requests.get(
-                f"{api_url}/card/id",
-                params={"user_id": user_id, "auth_admin": auth_token},
+                f"{api_url}/card/id?user_id={user_id}&auth_admin={auth_token}",
             )
             if response.status_code == 200:
                 cards_data = response.json()
@@ -179,7 +180,6 @@ def replenish_card():
     card_hash = st.text_input("Хэш карты")
     price = st.number_input("Сумма пополнения", min_value=0)
     inn = st.number_input("ИНН", min_value=0)
-
     if st.button("Пополнить"):
         auth_token = st.session_state.get('auth_hash')
         if auth_token:
@@ -248,6 +248,7 @@ def user_registration():
             else:
                 st.error("Ошибка регистрации")
 
+
 def user_info_page():
     st.title("Информация о пользователе")
     auth_token = st.session_state.get('auth_hash')
@@ -273,7 +274,6 @@ def user_info_page():
 def delete_cards():
     st.subheader("Удаление карт")
     secret_key = st.text_input("Секретный ключ карты")
-
     if st.button("Удалить карту"):
         response = requests.delete(
             f"{api_url}/card/delete",
@@ -283,6 +283,7 @@ def delete_cards():
             st.success("Карта успешно удалена!")
         else:
             st.error("Ошибка при удалении карты.")
+
 
 def view_all_locations():
     st.subheader("Список всех категорий")
@@ -294,6 +295,7 @@ def view_all_locations():
                 st.write(f"ID: {location['id']}, Название: {location['name']}")
     else:
         st.error("Ошибка при получении списка категорий.")
+
 
 def create_location():
     st.subheader("Создание новой категории")
@@ -323,7 +325,6 @@ def create_location():
 
 def main():
     initialize_session_state()
-
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
     if 'is_admin' not in st.session_state:
@@ -409,7 +410,6 @@ def main():
             user_registration()
             if st.button("Уже есть аккаунт? Войдите"):
                 st.session_state['show_registration'] = False
-
         if st.session_state['logged_in']:
             if st.button("Личный кабинет"):
                 user_info_page()
