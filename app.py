@@ -285,22 +285,22 @@ def delete_cards():
             st.error("Ошибка при удалении карты.")
 
 def view_all_locations():
-    st.subheader("Список всех локаций")
+    st.subheader("Список всех категорий")
     response = requests.get(f"{api_url}/category/all")
     if response.status_code == 200:
         locations_data = response.json()
-        with st.expander("Локации"):
+        with st.expander("Категории"):
             for location in locations_data:
                 st.write(f"ID: {location['id']}, Название: {location['name']}")
     else:
-        st.error("Ошибка при получении списка локаций.")
+        st.error("Ошибка при получении списка категорий.")
 
 def create_location():
-    st.subheader("Создание новой локации")
+    st.subheader("Создание новой категории")
     with st.form("create_location_form"):
-        name = st.text_input("Название локации")
+        name = st.text_input("Название категории")
         picture = st.text_input("URL картинки")
-        submitted = st.form_submit_button("Создать локацию")
+        submitted = st.form_submit_button("Создать категорию")
         if submitted:
             auth_token = st.session_state.get('auth_hash')
             if auth_token:
@@ -314,9 +314,9 @@ def create_location():
                     headers={'Content-Type': 'application/json'}
                 )
                 if response.status_code == 200:
-                    st.success("Локация успешно создана!")
+                    st.success("Категория успешно создана!")
                 else:
-                    st.error("Ошибка при создании локации.")
+                    st.error("Ошибка при создании категории.")
             else:
                 st.error("Ошибка: токен аутентификации не найден.")
 
@@ -346,7 +346,7 @@ def main():
                     "Посмотреть всех пользователей",
                     "Управление ролями",
                     "Регистрация нового админа",
-                    "Управление локациями",
+                    "Управление категориями",
                 ]
             )
             if admin_option == "Посмотреть все карты":
@@ -387,14 +387,14 @@ def main():
                 register()
             elif admin_option == "Пополнить карту":
                 replenish_card()
-            elif admin_option == "Управление локациями":
+            elif admin_option == "Управление категориями":
                 location_action = st.selectbox(
-                    "Выберите действие с локациями",
-                    ["Посмотреть все локации", "Создать локацию"]
+                    "Выберите действие с категориями",
+                    ["Посмотреть все категории", "Создать категорию"]
                 )
-                if location_action == "Посмотреть все локации":
+                if location_action == "Посмотреть все категории":
                     view_all_locations()
-                elif location_action == "Создать локацию":
+                elif location_action == "Создать категорию":
                     create_location()
     else:
         st.session_state['is_admin'] = False
